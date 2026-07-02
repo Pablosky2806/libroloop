@@ -3,6 +3,7 @@ package com.libroloop.service;
 import com.libroloop.dto.CategoriaDTO;
 import com.libroloop.dto.CategoriaRequestDTO;
 import com.libroloop.entity.Categoria;
+import com.libroloop.exception.BadRequestException;
 import com.libroloop.exception.ResourceNotFoundException;
 import com.libroloop.mapper.CategoriaMapper;
 import com.libroloop.repository.CategoriaRepository;
@@ -22,7 +23,7 @@ public class CategoriaService {
 
     public CategoriaDTO createCategoria(CategoriaRequestDTO categoriaRequestDTO) {
         if (categoriaRepository.existsByNombre(categoriaRequestDTO.getNombre())) {
-            throw new IllegalArgumentException("Ya existe una categoría con el nombre: " + categoriaRequestDTO.getNombre());
+            throw new BadRequestException("Ya existe una categoría con el nombre: " + categoriaRequestDTO.getNombre());
         }
 
         Categoria categoria = categoriaMapper.toEntity(categoriaRequestDTO);
@@ -47,7 +48,7 @@ public class CategoriaService {
 
         if (!existingCategoria.getNombre().equals(categoriaDTO.getNombre()) 
                 && categoriaRepository.existsByNombre(categoriaDTO.getNombre())) {
-            throw new IllegalArgumentException("Ya existe una categoría con el nombre: " + categoriaDTO.getNombre());
+            throw new BadRequestException("Ya existe una categoría con el nombre: " + categoriaDTO.getNombre());
         }
 
         categoriaMapper.updateEntityFromDTO(categoriaDTO, existingCategoria);
@@ -60,7 +61,7 @@ public class CategoriaService {
                 .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con id: " + id));
 
         if (!categoria.getLibros().isEmpty()) {
-            throw new IllegalArgumentException("No se puede eliminar la categoría porque tiene libros asociados");
+            throw new BadRequestException("No se puede eliminar la categoría porque tiene libros asociados");
         }
 
         categoriaRepository.delete(categoria);

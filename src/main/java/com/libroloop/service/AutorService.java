@@ -3,6 +3,7 @@ package com.libroloop.service;
 import com.libroloop.dto.AutorDTO;
 import com.libroloop.dto.AutorRequestDTO;
 import com.libroloop.entity.Autor;
+import com.libroloop.exception.BadRequestException;
 import com.libroloop.exception.ResourceNotFoundException;
 import com.libroloop.mapper.AutorMapper;
 import com.libroloop.repository.AutorRepository;
@@ -22,7 +23,7 @@ public class AutorService {
 
     public AutorDTO createAutor(AutorRequestDTO autorRequestDTO) {
         if (autorRepository.existsByNombre(autorRequestDTO.getNombre())) {
-            throw new IllegalArgumentException("Ya existe un autor con el nombre: " + autorRequestDTO.getNombre());
+            throw new BadRequestException("Ya existe un autor con el nombre: " + autorRequestDTO.getNombre());
         }
 
         Autor autor = autorMapper.toEntity(autorRequestDTO);
@@ -47,7 +48,7 @@ public class AutorService {
 
         if (!existingAutor.getNombre().equals(autorDTO.getNombre()) 
                 && autorRepository.existsByNombre(autorDTO.getNombre())) {
-            throw new IllegalArgumentException("Ya existe un autor con el nombre: " + autorDTO.getNombre());
+            throw new BadRequestException("Ya existe un autor con el nombre: " + autorDTO.getNombre());
         }
 
         autorMapper.updateEntityFromDTO(autorDTO, existingAutor);
@@ -60,7 +61,7 @@ public class AutorService {
                 .orElseThrow(() -> new ResourceNotFoundException("Autor no encontrado con id: " + id));
 
         if (!autor.getLibros().isEmpty()) {
-            throw new IllegalArgumentException("No se puede eliminar el autor porque tiene libros asociados");
+            throw new BadRequestException("No se puede eliminar el autor porque tiene libros asociados");
         }
 
         autorRepository.delete(autor);

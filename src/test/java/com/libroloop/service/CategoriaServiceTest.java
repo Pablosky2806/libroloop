@@ -74,7 +74,7 @@ class CategoriaServiceTest {
         when(categoriaRepository.existsByNombre(anyString())).thenReturn(true);
 
         assertThatThrownBy(() -> categoriaService.createCategoria(categoriaRequestDTO))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(com.libroloop.exception.BadRequestException.class)
                 .hasMessageContaining("Ya existe una categoría con el nombre");
 
         verify(categoriaRepository, never()).save(any(Categoria.class));

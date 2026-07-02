@@ -129,7 +129,7 @@ class EjemplarServiceTest {
         when(ejemplarRepository.findById(1L)).thenReturn(Optional.of(ejemplar));
 
         assertThatThrownBy(() -> ejemplarService.deleteEjemplar(1L))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(com.libroloop.exception.BadRequestException.class)
                 .hasMessageContaining("No se puede eliminar un ejemplar que está prestado");
 
         verify(ejemplarRepository, never()).delete(any(Ejemplar.class));

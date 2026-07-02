@@ -5,6 +5,7 @@ import com.libroloop.dto.LibroRequestDTO;
 import com.libroloop.entity.Autor;
 import com.libroloop.entity.Categoria;
 import com.libroloop.entity.Libro;
+import com.libroloop.exception.BadRequestException;
 import com.libroloop.exception.ResourceNotFoundException;
 import com.libroloop.mapper.LibroMapper;
 import com.libroloop.repository.AutorRepository;
@@ -31,7 +32,7 @@ public class LibroService {
 
     public LibroDTO createLibro(LibroRequestDTO libroRequestDTO) {
         if (libroRepository.existsByIsbn(libroRequestDTO.getIsbn())) {
-            throw new IllegalArgumentException("Ya existe un libro con el ISBN: " + libroRequestDTO.getIsbn());
+            throw new BadRequestException("Ya existe un libro con el ISBN: " + libroRequestDTO.getIsbn());
         }
 
         Autor autor = autorRepository.findById(libroRequestDTO.getAutorId())
@@ -43,7 +44,7 @@ public class LibroService {
         if (libroRequestDTO.getCategoriaIds() != null && !libroRequestDTO.getCategoriaIds().isEmpty()) {
             Set<Categoria> categorias = new HashSet<>(categoriaRepository.findAllById(libroRequestDTO.getCategoriaIds()));
             if (categorias.size() != libroRequestDTO.getCategoriaIds().size()) {
-                throw new IllegalArgumentException("Una o más categorías no fueron encontradas");
+                throw new BadRequestException("Una o más categorías no fueron encontradas");
             }
             libro.setCategorias(new ArrayList<>(categorias));
         }
@@ -75,7 +76,7 @@ public class LibroService {
 
         if (!existingLibro.getIsbn().equals(libroDTO.getIsbn()) 
                 && libroRepository.existsByIsbn(libroDTO.getIsbn())) {
-            throw new IllegalArgumentException("Ya existe un libro con el ISBN: " + libroDTO.getIsbn());
+            throw new BadRequestException("Ya existe un libro con el ISBN: " + libroDTO.getIsbn());
         }
 
         if (libroDTO.getAutorId() != null) {
@@ -99,7 +100,7 @@ public class LibroService {
                 .orElseThrow(() -> new ResourceNotFoundException("Libro no encontrado con id: " + id));
 
         if (!libro.getEjemplares().isEmpty()) {
-            throw new IllegalArgumentException("No se puede eliminar el libro porque tiene ejemplares asociados");
+            throw new BadRequestException("No se puede eliminar el libro porque tiene ejemplares asociados");
         }
 
         libroRepository.delete(libro);
