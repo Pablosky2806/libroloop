@@ -92,7 +92,7 @@ class LibroServiceTest {
         when(libroRepository.existsByIsbn(anyString())).thenReturn(true);
 
         assertThatThrownBy(() -> libroService.createLibro(libroRequestDTO))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(com.libroloop.exception.BadRequestException.class)
                 .hasMessageContaining("Ya existe un libro con el ISBN");
 
         verify(libroRepository, never()).save(any(Libro.class));

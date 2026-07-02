@@ -4,6 +4,7 @@ import com.libroloop.dto.EjemplarDTO;
 import com.libroloop.dto.EjemplarRequestDTO;
 import com.libroloop.entity.Ejemplar;
 import com.libroloop.entity.Libro;
+import com.libroloop.exception.BadRequestException;
 import com.libroloop.exception.ResourceNotFoundException;
 import com.libroloop.mapper.EjemplarMapper;
 import com.libroloop.repository.EjemplarRepository;
@@ -29,7 +30,7 @@ public class EjemplarService {
 
         if (ejemplarRequestDTO.getCodigoInventario() != null 
                 && ejemplarRepository.existsByCodigoInventario(ejemplarRequestDTO.getCodigoInventario())) {
-            throw new IllegalArgumentException("Ya existe un ejemplar con el código de inventario: " + ejemplarRequestDTO.getCodigoInventario());
+            throw new BadRequestException("Ya existe un ejemplar con el código de inventario: " + ejemplarRequestDTO.getCodigoInventario());
         }
 
         Ejemplar ejemplar = ejemplarMapper.toEntity(ejemplarRequestDTO);
@@ -76,7 +77,7 @@ public class EjemplarService {
         if (ejemplarDTO.getCodigoInventario() != null 
                 && !existingEjemplar.getCodigoInventario().equals(ejemplarDTO.getCodigoInventario())
                 && ejemplarRepository.existsByCodigoInventario(ejemplarDTO.getCodigoInventario())) {
-            throw new IllegalArgumentException("Ya existe un ejemplar con el código de inventario: " + ejemplarDTO.getCodigoInventario());
+            throw new BadRequestException("Ya existe un ejemplar con el código de inventario: " + ejemplarDTO.getCodigoInventario());
         }
 
         if (ejemplarDTO.getLibroId() != null) {
@@ -95,7 +96,7 @@ public class EjemplarService {
                 .orElseThrow(() -> new ResourceNotFoundException("Ejemplar no encontrado con id: " + id));
 
         if (ejemplar.getEstado() == Ejemplar.Estado.PRESTADO) {
-            throw new IllegalArgumentException("No se puede eliminar un ejemplar que está prestado");
+            throw new BadRequestException("No se puede eliminar un ejemplar que está prestado");
         }
 
         ejemplarRepository.delete(ejemplar);

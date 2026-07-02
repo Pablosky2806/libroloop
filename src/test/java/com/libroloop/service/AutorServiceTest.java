@@ -74,7 +74,7 @@ class AutorServiceTest {
         when(autorRepository.existsByNombre(anyString())).thenReturn(true);
 
         assertThatThrownBy(() -> autorService.createAutor(autorRequestDTO))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(com.libroloop.exception.BadRequestException.class)
                 .hasMessageContaining("Ya existe un autor con el nombre");
 
         verify(autorRepository, never()).save(any(Autor.class));
@@ -129,7 +129,7 @@ class AutorServiceTest {
         when(autor.getLibros()).thenReturn(Arrays.asList(new com.libroloop.entity.Libro()));
 
         assertThatThrownBy(() -> autorService.deleteAutor(1L))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(com.libroloop.exception.BadRequestException.class)
                 .hasMessageContaining("No se puede eliminar el autor porque tiene libros asociados");
 
         verify(autorRepository, never()).delete(any(Autor.class));
